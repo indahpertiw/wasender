@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CustomTitlebar from "./components/CustomTitlebar.svelte";
   import SettingsManager from "./components/SettingsManager.svelte";
   import TabBar from "./components/TabBar.svelte";
   import TabConfigModal from "./components/TabConfigModal.svelte";
@@ -16,6 +17,10 @@
     });
   };
 
+  const customTitlebarEnabled = $settings["customTitlebar"]
+    ? $settings["customTitlebar"].value
+    : false;
+
   ipcRenderer.on("open-theme-manager", () => {
     $modals.themeManagerVisible = true;
   });
@@ -32,7 +37,8 @@
   });
 </script>
 
-<main>
+<main class:customTitlebar={customTitlebarEnabled}>
+  <CustomTitlebar />
   <div class="container">
     <TabBar
       on:add-tab={() => {
@@ -69,7 +75,7 @@
   </div>
 </main>
 
-<style>
+<style lang="scss">
   main {
     height: 100%;
   }
@@ -78,5 +84,14 @@
     flex-flow: column;
     height: 100%;
     position: relative;
+  }
+  .customTitlebar {
+    border: 1px solid #48545c;
+    overflow-y: hidden;
+
+    .container {
+      height: calc(100% - 32px);
+      margin-top: 32px;
+    }
   }
 </style>

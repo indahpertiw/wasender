@@ -69,6 +69,12 @@ const defaultSettings: () => Settings = () => {
       description:
         "The directory where you want to save the downloads. (NOTE: Requires an absolute path)",
     },
+    customTitlebar: {
+      value: false,
+      name: "Custom Titlebar",
+      description:
+        "When enabled, Altus will use a custom titlebar instead of the one provided by the system. (NOTE: Requires restart)",
+    },
   };
 };
 

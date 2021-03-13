@@ -51,6 +51,10 @@ const confirmExit = () => {
 };
 
 const createMainWindow = () => {
+  let customTitlebarEnabled = settings.get("customTitlebar")
+    ? settings.get("customTitlebar").value
+    : false;
+
   const mainWindow = new BrowserWindow({
     minWidth: 400,
     minHeight: 200,
@@ -62,6 +66,8 @@ const createMainWindow = () => {
       webviewTag: true,
     },
     show: false,
+    frame: process.platform !== "darwin" ? !customTitlebarEnabled : true,
+    titleBarStyle: process.platform !== "darwin" ? "hidden" : "default",
   });
 
   mainWindow.loadFile(path.join(__dirname, "../public/index.html"));
@@ -163,6 +169,10 @@ if (!singleInstanceLock) {
       altusAutoLauncher.disable();
     }
 
+    mainWindow.on("blur", () => mainWindow.send("window-blurred"));
+
+    mainWindow.on("focus", () => mainWindow.send("window-focused"));
+
     ipcMain.on("import-settings", importSettings);
 
     ipcMain.on("export-settings", exportSettings);
@@ -172,6 +182,22 @@ if (!singleInstanceLock) {
     ipcMain.on("flush-session-data", flushSessionData);
 
     ipcMain.on("zoom", zoom);
+
+    ipcMain.on("minimize-window", () => {
+      mainWindow.minimize();
+    });
+
+    ipcMain.on("maximize-window", () => {
+      mainWindow.maximize();
+    });
+
+    ipcMain.on("restore-window", () => {
+      mainWindow.restore();
+    });
+
+    ipcMain.on("close-window", () => {
+      mainWindow.close();
+    });
 
     ipcMain.on("open-link", (e, url) => {
       shell.openExternal(url);
